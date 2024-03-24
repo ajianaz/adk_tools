@@ -3,12 +3,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../app/modules/api_log/models/api_log_model.dart';
+import 'package:adk_tools/config/adk_tools_init.dart';
+
 import '../config/app_config.dart';
-import '../config/constant.dart';
 import '../utils/app_storage.dart';
 import '../utils/app_utils.dart';
-import '../widgets/others/show_dialog.dart';
 import 'package:dio/dio.dart';
 
 enum Method { POST, GET, PUT, DELETE, PATCH }
@@ -57,7 +56,7 @@ class ApiService {
     required bool isToken,
   }) async {
     final header = <String, String>{'Content-Type': 'application/json'};
-    final token = await AppStorage.read(key: CACHE_ACCESS_TOKEN);
+    final token = await AppStorage.read(key: ADKTools.boxToken);
     if (isToken) {
       header['Authorization'] = 'Bearer $token';
     }
@@ -97,15 +96,6 @@ class ApiService {
       }
 
       if (response.statusCode == 200) {
-        //TODO NEED TO EDIT LATER
-        if (isCustomResponse) {
-          return checkResponse(
-            url: url,
-            params: params,
-            response: response.data,
-            method: method,
-          );
-        }
         return response.data;
       } else if (response.statusCode == 401) {
         throw Exception('Unauthorized');
@@ -140,28 +130,5 @@ class ApiService {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Future<dynamic> checkResponse({
-    required String url,
-    required Map<String, dynamic> params,
-    required dynamic response,
-    required Method method,
-  }) async {
-    await ApiLogger().log(
-      data: ApiLogModel(
-        url: '${AppConfig.baseUrl}$url',
-        payload: params.toString(),
-        response: response.toString(),
-        method: method.toString(),
-      ),
-    );
-
-    if (response['response_code'] == 200) {
-      return response['response_data'];
-    }
-
-    showToast(message: response['response_data']['message']);
-    throw Exception(response['response_data']['message']);
   }
 }
