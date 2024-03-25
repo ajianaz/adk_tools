@@ -1,23 +1,21 @@
-import 'package:adk_tools/config/adk_tools_init.dart';
-import 'package:hive/hive.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AppStorage {
-  static final _hive = Hive.box<dynamic>(ADKTools.appName);
-
-  static read({required String key, dynamic defaultvalue}) {
-    return _hive.get(key, defaultValue: defaultvalue);
+  static Future write({required String key, required String value}) async {
+    await GetStorage().write(key, value);
   }
 
-  static write({required String key, dynamic data}) {
-    return _hive.put(key, data);
+  static Future<String> read({required String key}) async {
+    final s = await GetStorage().read(key);
+    return s ?? '';
   }
 
-  static delete({required String key}) {
-    return _hive.delete(key);
+  static Future delete({required String key}) async {
+    await GetStorage().remove(key);
   }
 
-  static bool isContain({required dynamic key}) {
-    bool check = _hive.containsKey(key);
-    return check;
+  static Future<bool> isContain({required String key}) async {
+    final s = GetStorage().hasData(key);
+    return s;
   }
 }

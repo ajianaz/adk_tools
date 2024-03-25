@@ -1,3 +1,5 @@
+import 'app_config.dart';
+
 class ADKTools {
   static init({
     /// [REQUIRED] Mengatur base url Development
@@ -12,6 +14,12 @@ class ADKTools {
     /// [REQUIRED] Mengatur Apikey
     required String apiKey,
 
+    /// [REQUIRED] Mengatur Apikey
+    required String appName,
+
+    /// [REQUIRED] Mengatur Mode Flavor
+    required Flavor appFlavor,
+
     /// [OPTIONAL] Mengatur base url Production
     String? boxToken,
   }) {
@@ -20,6 +28,8 @@ class ADKTools {
     urlProd != null ? ADKTools.urlProd = urlProd : ADKTools.urlProd = urlDev;
 
     ADKTools.apiKey = apiKey;
+    ADKTools.appName = appName;
+    ADKTools.appFlavor = appFlavor;
 
     if (boxToken != null) ADKTools.boxToken = boxToken;
   }
@@ -30,6 +40,7 @@ class ADKTools {
 
   static String apiKey = "ajianaz.dev";
   static String appName = "APPNAME";
+  static Flavor appFlavor = Flavor.development;
 
   static String boxToken = "token";
 }

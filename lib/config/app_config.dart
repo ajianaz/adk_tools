@@ -9,7 +9,7 @@ class AppConfig {
 
   static final apiKey = ADKTools.apiKey;
 
-  static late Flavor appFlavor;
+  static Flavor appFlavor = Flavor.development;
 
   static bool get isDevelopment {
     return appFlavor == Flavor.development;

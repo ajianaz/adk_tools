@@ -16,7 +16,7 @@ class ApiService {
   Dio? _dio;
 
   Future<ApiService> init() async {
-    logSys('Api Service Initialized');
+    logSys('Api Service Initialized - ${AppConfig.baseUrl}');
     _dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.baseUrl,
@@ -44,6 +44,7 @@ class ApiService {
           return handler.next(response);
         },
         onError: (err, handler) {
+          logSys('Error-> ${err}]');
           logSys('Error[${err.response?.statusCode}]');
           return handler.next(err);
         },
