@@ -1,11 +1,11 @@
 import 'package:get_storage/get_storage.dart';
 
 class AppStorage {
-  static Future write({required String key, required String value}) async {
+  static Future write({required String key, required dynamic value}) async {
     await GetStorage().write(key, value);
   }
 
-  static Future<String> read({required String key}) async {
+  static Future<dynamic> read({required String key}) async {
     final s = await GetStorage().read(key);
     return s ?? '';
   }
