@@ -15,6 +15,9 @@ class ADKTools {
     required String apiKey,
 
     /// [REQUIRED] Mengatur Apikey
+    required String apiDevKey,
+
+    /// [REQUIRED] Mengatur Apikey
     required String appName,
 
     /// [REQUIRED] Mengatur Mode Flavor
@@ -28,6 +31,7 @@ class ADKTools {
     urlProd != null ? ADKTools.urlProd = urlProd : ADKTools.urlProd = urlDev;
 
     ADKTools.apiKey = apiKey;
+    ADKTools.apiDevKey = apiDevKey;
     ADKTools.appName = appName;
     ADKTools.appFlavor = appFlavor;
 
@@ -39,6 +43,8 @@ class ADKTools {
   static String urlProd = "http://localhost:3000";
 
   static String apiKey = "ajianaz.dev";
+  static String apiDevKey = "ajianaz.dev";
+
   static String appName = "APPNAME";
   static Flavor appFlavor = Flavor.development;
 

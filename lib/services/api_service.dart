@@ -52,42 +52,71 @@ class ApiService {
     );
   }
 
-  static Future<Map<String, String>> getHeader({
-    Map<String, String>? headers,
+  static Future<Map<String, dynamic>> getHeader({
+    Map<String, dynamic>? headers,
     required bool isToken,
   }) async {
-    final header = <String, String>{'Content-Type': 'application/json'};
+    final header = <String, dynamic>{'Content-Type': 'application/json'};
     final token = await AppStorage.read(key: ADKTools.boxToken);
+
+    // Jika headers tidak null, tambahkan semua headers yang ada ke header baru
+    if (headers != null) {
+      header.addAll(headers);
+    }
+
     if (isToken) {
       header['Authorization'] = 'Bearer $token';
     }
     return header;
   }
 
-  Future<dynamic> request({
-    required String url,
-    required Method method,
-    Map<String, String>? headers,
-    Map<String, dynamic>? parameters,
-    bool isToken = true,
-    bool isCustomResponse = false,
-  }) async {
+  getGatewayKey(int unixtime, {isProd = true}) async {
+    var result = '';
+    if (isProd) {
+      result = AppUtils.encryptHMAC(unixtime, ADKTools.apiKey);
+    } else {
+      result = ADKTools.apiDevKey;
+    }
+    logSys(result);
+    return result;
+  }
+
+  Future<dynamic> request(
+      {required String url,
+      required Method method,
+      Map<String, dynamic>? headers,
+      Map<String, dynamic>? parameters,
+      FormData? formData,
+      bool isToken = true,
+      bool isCustomResponse = false,
+      bool isProd = true}) async {
     Response response;
 
     final params = parameters ?? <String, dynamic>{};
 
     final header = await getHeader(headers: headers, isToken: isToken);
 
-    if (_dio == null) {
-      _dio = Dio(BaseOptions(baseUrl: AppConfig.baseUrl, headers: header));
-      initInterceptors();
-    }
-
     try {
+      final unixTime = DateTime.now().millisecondsSinceEpoch;
+      // Tambahkan gatewayKey ke header jika diperlukan
+      if (isProd) {
+        final gatewayKey = await getGatewayKey(unixTime, isProd: isProd);
+        header['gateway_key'] = gatewayKey;
+        header['unixtime'] = unixTime.toString();
+      } else {
+        header['gateway_key'] = ADKTools.apiDevKey;
+        header['unixtime'] = unixTime.toString();
+      }
+
+      if (_dio == null) {
+        _dio = Dio(BaseOptions(baseUrl: AppConfig.baseUrl, headers: header));
+        initInterceptors();
+      }
+
       if (method == Method.POST) {
-        response = await _dio!.post(url, data: parameters);
+        response = await _dio!.post(url, data: formData ?? parameters);
       } else if (method == Method.PUT) {
-        response = await _dio!.put(url, data: parameters);
+        response = await _dio!.put(url, data: formData ?? parameters);
       } else if (method == Method.DELETE) {
         response = await _dio!.delete(url, queryParameters: params);
       } else if (method == Method.PATCH) {

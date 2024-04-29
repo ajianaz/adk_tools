@@ -12,10 +12,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:crypto/crypto.dart';
 
 class AppUtils {
   static dismissKeyboard() {
     FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  //Enkripsi kebutuhan header api
+  static String encryptHMAC(int unixTime, String apiKey) {
+    final currentDate = DateTime.now().toIso8601String().substring(0, 10);
+    final combinedString = apiKey + currentDate;
+
+    final keyBytes =
+        utf8.encode(combinedString); // Buat sebuah kunci dari kombinasi string
+    final plainBytes =
+        utf8.encode(unixTime.toString()); // Konversi unixtime ke bytes
+
+    final hmacSha256 = Hmac(sha256,
+        keyBytes); // Siapkan proses enkripsi HMAC-SHA256 menggunakan kunci yang telah dibuat
+    final digest = hmacSha256.convert(plainBytes); // Lakukan enkripsi
+
+    final cipherHexString =
+        digest.toString(); // Konversikan hasil enkripsi menjadi string hex
+
+    return cipherHexString;
   }
 
   static Future<bool> checkTokenValidity(String token) async {
