@@ -41,11 +41,36 @@ class AppUtils {
 
   static Future<bool> checkTokenValidity(String token) async {
     try {
+      final exp = JwtDecoder.getExpirationDate(token);
+      final currentTime = DateTime.now();
+      final tokenCreated = getIssuedAtToken(token);
+
+      // Log current time and expiration time
+      final formattedCurrentTime =
+          DateFormat('dd MMM yyyy HH:mm').format(currentTime);
+      final formattedExpirationDate =
+          DateFormat('dd MMM yyyy HH:mm').format(exp);
+      final formattedTokenCreated =
+          DateFormat('dd MMM yyyy HH:mm').format(tokenCreated);
+
+      logSys('Current time: $formattedCurrentTime');
+      logSys('Token expires at: $formattedExpirationDate');
+      logSys('Token created at: $formattedTokenCreated');
       return !JwtDecoder.isExpired(token);
     } catch (e) {
       logSys(e.toString());
       return false;
     }
+  }
+
+  static DateTime getIssuedAtToken(String token) {
+    final decodedToken = JwtDecoder.decode(token);
+
+    // Get the issued at (iat) claim and convert to DateTime
+    final issuedAtDate =
+        DateTime.fromMillisecondsSinceEpoch(decodedToken["iat"] * 1000);
+
+    return issuedAtDate;
   }
 
   static bool checkAvailDateTime({
