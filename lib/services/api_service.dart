@@ -77,7 +77,6 @@ class ApiService {
     } else {
       result = ADKTools.apiDevKey;
     }
-    logSys(result);
     return result;
   }
 
@@ -125,7 +124,7 @@ class ApiService {
         response = await _dio!.get(url, queryParameters: params);
       }
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data;
       } else if (response.statusCode == 401) {
         throw Exception('Unauthorized');
