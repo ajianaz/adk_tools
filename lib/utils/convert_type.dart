@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class ConvertType {
   static double toDouble(dynamic value) {
     try {
@@ -19,5 +21,12 @@ class ConvertType {
         rethrow;
       }
     }
+  }
+
+  static String formatedDate(
+      {required String value, String? format = "dd MMM yyy"}) {
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    DateTime date = dateFormat.parse(value);
+    return DateFormat(format, 'id').format(date);
   }
 }
