@@ -153,6 +153,19 @@ class AppUtils {
 
     return resultFile;
   }
+
+  static bool isValidTimeRange(String startTime, String endTime) {
+    // Parse string ke objek DateTime
+    DateTime start = DateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
+    DateTime end = DateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
+
+    // Bandingkan waktu
+    if (start.isAfter(end) || start.isAtSameMomentAs(end)) {
+      return false; // Jika waktu mulai melebihi atau sama dengan waktu selesai
+    } else {
+      return true; // Jika waktu mulai tidak melebihi waktu selesai
+    }
+  }
 }
 
 class ThousandsSeparatorInputFormatter extends TextInputFormatter {
