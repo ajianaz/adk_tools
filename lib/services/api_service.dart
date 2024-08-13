@@ -21,6 +21,9 @@ class ApiService {
       BaseOptions(
         baseUrl: AppConfig.baseUrl,
         headers: {'Content-Type': 'application/json'},
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 60),
       ),
     );
     initInterceptors();
@@ -108,7 +111,13 @@ class ApiService {
       }
 
       if (_dio == null) {
-        _dio = Dio(BaseOptions(baseUrl: AppConfig.baseUrl, headers: header));
+        _dio = Dio(BaseOptions(
+          baseUrl: AppConfig.baseUrl,
+          headers: header,
+          connectTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 60),
+          sendTimeout: const Duration(seconds: 60),
+        ));
         initInterceptors();
       }
 
